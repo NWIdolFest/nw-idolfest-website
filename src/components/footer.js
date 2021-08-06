@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -15,13 +15,6 @@ const useStyles = makeStyles(theme => ({
         '& .social': {
             padding: '1em',
             fontSize: '.5em',
-            '& a': {
-                textDecoration: 'none',
-                boxShadow: 'none',
-                '& :hover': {
-                    color: theme.palette.light_pink
-                }
-            },
             '& svg': {
                 color: 'white'
             },
@@ -44,9 +37,9 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-function wrapFooterSocial(children) {
+function wrapFooterSocial(children, url) {
     return (
-        <Grid item className='social'>
+        <Grid component={'a'} className='social' href={url} target='_blank' rel='noreferrer' item>
             {children}
         </Grid>
     )
@@ -71,33 +64,37 @@ export default function Footer() {
             }`
     )
 
-    const socialSites = site.siteMetadata.social
-    
-    return (
-        <footer>
-            <Box className={classes.footer}>
-                <Grid container direction='row' justify='flex-start' alignItems='center'>
-                    {/* <Grid item>
-                        <StaticImage
-                            layout='constrained'
-                            // This is a presentational image, so the alt should be an empty string
-                            alt=''
-                            height={50}
-                            transformOptions={{ fit: "contain" }}
-                            src='../images/icon/Icon-Pink.png'
-                        />
-                    </Grid> */}
-                    {wrapFooterSocial(createSocialIcon(`https://facebook.com/${socialSites.facebook}`, 'facebook'))}
-                    {wrapFooterSocial(createSocialIcon(`https://twitter.com/${socialSites.twitter}`, 'twitter'))}
-                    {wrapFooterSocial(createSocialIcon(`https://instagram.com/${socialSites.instagram}`, 'instagram'))}
-                    {wrapFooterSocial(createSocialIcon(`https://discord.gg/${socialSites.discord}`, 'discord'))}
-                    <Grid item className='copyright'>
-                        <Typography>
-                            &copy; {new Date().getFullYear()} <a href='https://nijiiroevents.com/' target='_blank' rel='noreferrer'>Nijiiro Events LLC</a>
-                        </Typography>
+    const content = useMemo(() => {
+        const socialSites = site.siteMetadata.social
+        return (
+            <footer>
+                <Box className={classes.footer}>
+                    <Grid container direction='row' justify='flex-start' alignItems='center'>
+                        {/* <Grid item>
+                            <StaticImage
+                                layout='constrained'
+                                // This is a presentational image, so the alt should be an empty string
+                                alt=''
+                                height={50}
+                                transformOptions={{ fit: "contain" }}
+                                src='../images/icon/Icon-Pink.png'
+                            />
+                        </Grid> */}
+                        {wrapFooterSocial(createSocialIcon('facebook'), `https://facebook.com/${socialSites.facebook}`)}
+                        {wrapFooterSocial(createSocialIcon('twitter'), `https://twitter.com/${socialSites.twitter}`)}
+                        {wrapFooterSocial(createSocialIcon('instagram'), `https://instagram.com/${socialSites.instagram}`)}
+                        {wrapFooterSocial(createSocialIcon('discord'), `https://discord.gg/${socialSites.discord}`)}
+                        <Grid item className='copyright'>
+                            <Typography>
+                                &copy; {new Date().getFullYear()} <a href='https://nijiiroevents.com/' target='_blank' rel='noreferrer'>Nijiiro Events LLC</a>
+                            </Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Box>
-        </footer>
-    )
+                </Box>
+            </footer>
+        )
+    }, [site, classes.footer])
+
+    
+    return content
 }
